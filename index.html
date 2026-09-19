@@ -6,7 +6,6 @@
 <meta name="theme-color" content="#07080d">
 <title>AI-Аналитик ниши</title>
 
-<!-- Telegram Mini App SDK (безопасно работает и в обычном браузере) -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -42,7 +41,6 @@
   button { font-family: var(--sans); }
   .nq-scroll::-webkit-scrollbar { width: 0; }
 
-  /* ---------- animations ---------- */
   @keyframes nq-grid-pan { from { background-position: 0 0; } to { background-position: 44px 44px; } }
   @keyframes nq-spin { to { transform: rotate(360deg); } }
   @keyframes nq-pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
@@ -54,7 +52,6 @@
   @keyframes nq-dash { to { stroke-dashoffset: 0; } }
   @keyframes nq-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
-  /* ---------- shell ---------- */
   .nq-root {
     min-height: 100vh;
     min-height: 100dvh;
@@ -86,7 +83,6 @@
     min-height: 100vh; min-height: 100dvh;
   }
 
-  /* ---------- reusable ---------- */
   .nq-label {
     font-size: 11px; color: var(--muted2);
     font-family: var(--mono); text-transform: uppercase; letter-spacing: 1.5px;
@@ -128,15 +124,8 @@
 </div>
 
 <script>
-/* ============================================================
-   AI-Аналитик ниши — Telegram Mini App (прототип)
-   Демо-логика анализа: статическая модель + случайный результат.
-   ============================================================ */
-
-/* >>> Поменяй имя в подписи "Powered by …" здесь <<< */
 const AUTHOR = "Иван Аналитик";
 
-/* ---------- Telegram WebApp ---------- */
 const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
 function haptic(type) {
   try {
@@ -155,9 +144,8 @@ if (tg) {
   } catch (e) {}
 }
 
-/* ---------- state ---------- */
 const state = {
-  screen: 'onboarding', // onboarding|input|loading|result|details|history|pro|profile
+  screen: 'onboarding',
   query: '',
   result: null,
   loadingMsg: '',
@@ -166,7 +154,6 @@ const state = {
 };
 let _timer = null;
 
-/* ---------- static demo data ---------- */
 const onboardFeatures = [
   { icon: '⚡', title: 'Анализ за 2 секунды', sub: 'Спрос, конкуренция, цена', tint: 'rgba(0,229,209,.14)' },
   { icon: '🎯', title: 'Чёткий вердикт', sub: 'Заходить в нишу или нет', tint: 'rgba(124,92,255,.16)' },
@@ -185,7 +172,6 @@ const examples = [
   { emoji: '🧸', title: 'Детские игрушки', hint: 'Сезонный спрос', tint: 'rgba(42,212,255,.14)' },
 ];
 
-/* ---------- nav icons ---------- */
 const NAV_ICONS = {
   analyze: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-4 3 3 4-6"/></svg>',
   history: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9 9 0 0 0-9 9"/><path d="M3 3v5h5"/><path d="M12 7v5l3 3"/></svg>',
@@ -194,12 +180,10 @@ const NAV_ICONS = {
 };
 const LOGO_SVG = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#07080d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-4 3 3 4-6"/></svg>';
 
-/* ---------- helpers ---------- */
 function esc(s) {
   return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 }
 
-/* ---------- analysis logic (демо) ---------- */
 function generate(q) {
   const r = () => Math.floor(Math.random() * 3);
   const dLvl = r(), cLvl = r();
@@ -233,7 +217,6 @@ function generate(q) {
     scoreIcon = '≈';
   }
 
-  // KPIs
   const sellers = (Math.floor(Math.random() * 900) + 120);
   const revenue = (Math.floor(Math.random() * 90) + 12);
   const margin = (Math.floor(Math.random() * 35) + 18);
@@ -243,7 +226,6 @@ function generate(q) {
     { value: margin + '%', label: 'ср. маржа', color: '#1fe084' },
   ];
 
-  // trend (12 pts) — bias by demand level
   const base = 25 + dLvl * 18;
   const pts = [];
   let v = base;
@@ -266,7 +248,6 @@ function generate(q) {
   const trendDir = (trendUp ? '▲ +' : '▼ −') + trendPct + '%';
   const trendDirColor = trendUp ? '#1fe084' : '#ff5a6e';
 
-  // seasonality
   const months = ['Я','Ф','М','А','М','И','И','А','С','О','Н','Д'];
   const season = months.map((m, i) => {
     const hv = Math.floor(Math.random() * 60) + 35;
@@ -274,7 +255,6 @@ function generate(q) {
     return { m, h: hv + '%', color: hot ? '#00e5d1' : 'rgba(124,92,255,.55)', delay: (i * 0.04).toFixed(2) + 's' };
   });
 
-  // competitors
   const brands = ['MarketPro', 'TopSeller', 'NeoShop', 'PrimeGoods', 'UltraStore', 'FlexMart', 'GoodsLab'];
   const shuffled = brands.slice().sort(() => Math.random() - 0.5).slice(0, 4);
   let shareLeft = 100;
@@ -293,7 +273,6 @@ function generate(q) {
   };
 }
 
-/* ---------- actions ---------- */
 function setScreen(screen) { state.screen = screen; render(); }
 
 function analyze(preset) {
@@ -332,7 +311,6 @@ function reset() { state.query = ''; state.result = null; state.screen = 'input'
 function activatePro() { state.proActive = true; haptic('success'); render(); }
 function openHistory(idx) { state.result = state.history[idx]; state.screen = 'result'; render(); }
 
-/* ---------- meta ---------- */
 function topMeta() {
   const map = {
     input:   ['AI-Аналитик ниши', 'neural scan · готов'],
@@ -356,15 +334,10 @@ function navConfig() {
   ];
 }
 
-/* ---------- footer ---------- */
 function poweredBy() {
   return `<span style="font-size:11px;color:var(--muted3);font-family:var(--mono);">Powered by </span>
     <span style="font-size:11px;font-weight:700;font-family:var(--mono);background:linear-gradient(90deg,#00e5d1,#7c5cff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">${esc(AUTHOR)}</span>`;
 }
-
-/* ============================================================
-   SCREENS
-   ============================================================ */
 
 function screenOnboarding() {
   const features = onboardFeatures.map(f => `
@@ -695,7 +668,6 @@ function screenProfile() {
   </div>`;
 }
 
-/* ---------- main app shell (top bar + scroll + nav) ---------- */
 function renderShell() {
   const [topTitle, topSub] = topMeta();
   let content;
@@ -733,12 +705,10 @@ function renderShell() {
   </div>`;
 }
 
-/* ---------- render ---------- */
 function render() {
   const app = document.getElementById('app');
   app.innerHTML = state.screen === 'onboarding' ? screenOnboarding() : renderShell();
 
-  // Telegram BackButton: показываем на детальном разборе
   if (tg && tg.BackButton) {
     try {
       if (state.screen === 'details') tg.BackButton.show();
@@ -746,7 +716,6 @@ function render() {
     } catch (e) {}
   }
 
-  // привязка инпута (без ре-рендера при наборе — фокус не теряется)
   const input = document.getElementById('nq-query');
   if (input) {
     input.addEventListener('input', e => { state.query = e.target.value; });
@@ -754,7 +723,6 @@ function render() {
   }
 }
 
-/* ---------- event delegation ---------- */
 document.getElementById('app').addEventListener('click', e => {
   const el = e.target.closest('[data-act]');
   if (!el) return;
@@ -773,7 +741,6 @@ document.getElementById('app').addEventListener('click', e => {
   }
 });
 
-// Telegram кнопка "назад" с детального разбора
 if (tg && tg.BackButton) {
   try { tg.BackButton.onClick(() => { if (state.screen === 'details') setScreen('result'); }); } catch (e) {}
 }
